@@ -6,7 +6,7 @@
 # **Docker** Lab
 ------
 
-![img](../../../../Orchestration/Workshop/Practical%20Container%20Orchestration%20-%20May%202019/LABS/images/docker.png)
+![img](images/docker.png)
 
 
 
