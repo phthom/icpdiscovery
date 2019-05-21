@@ -1199,7 +1199,7 @@ Copy the content below in one file (icpinstall.sh for example) in your /root dir
 ```
 #!/bin/bash
 #
-# ICP 3.1.2 - Docker 18.03.1 - Ubuntu 16.04.04 - Microclimate 1.10.0
+# ICP 3.1.2 - Docker 18.03.1 - Ubuntu 16.04.04
 # 
 
 
