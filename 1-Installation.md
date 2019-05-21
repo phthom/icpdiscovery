@@ -237,11 +237,10 @@ ff02::3 ip6-allhosts
 
 **Save** the file (ctrl O, enter, ctrl X ).
 
-Use the following 2 commands to **update** the system with some complementary packages:
+Use the following command to **update** the system with some complementary packages:
 
 ```console
-apt -qq update
-apt -q install apt-transport-https ca-certificates curl software-properties-common python-minimal jq
+apt -y install apt-transport-https ca-certificates curl software-properties-common python-minimal jq
 ```
 
 Check carefully the output to see if you have errors and especially if you cannot connect.
@@ -356,13 +355,13 @@ You can list all versions available in the added repo:
 
 Use the following command to get Docker installed (Docker version 18.03.1 is the maximum version supported by IBM Cloud Private 3.1.0):
 
-`apt -y install docker-ce=18.06.2~ce~3-0~ubuntu`
+`apt-get -y install docker-ce=18.03.1~ce-0~ubuntu`
 
 Results:
 
 ```
 ...
-Unpacking docker-ce (18.06.2~ce~3-0~ubuntu) ...
+Unpacking docker-ce (18.03.1~ce~3-0~ubuntu) ...
 Processing triggers for man-db (2.7.5-1) ...
 Processing triggers for libc-bin (2.23-0ubuntu10) ...
 Processing triggers for ureadahead (0.100.0-19) ...
@@ -381,12 +380,12 @@ Check that Docker is running (client and server):
 
 `docker version`
 
-Results:
+Results (as an example)
 
 ```
 # docker version
 Client:
- Version:           18.06.2-ce
+ Version:           18.03.1-ce
  API version:       1.38
  Go version:        go1.10.3
  Git commit:        6d37f41
@@ -396,7 +395,7 @@ Client:
 
 Server:
  Engine:
-  Version:          18.06.2-ce
+  Version:          18.03.1-ce
   API version:      1.38 (minimum version 1.12)
   Go version:       go1.10.3
   Git commit:       6d37f41
@@ -462,7 +461,7 @@ mkdir /opt/icp
 cd /opt/icp
 ```
 
-Copy the ICP package into that directory:
+Copy the ICP package into that directory with this command:
 
 ```console
 docker run -e LICENSE=accept -v "$(pwd)":/data ibmcom/icp-inception:3.1.2 cp -r cluster /data
@@ -480,7 +479,7 @@ drwxr-xr-x 3 root root 4096 May 17 19:15 cluster
 
 ### Task 6: SSH Keys setup
 
-We are going to generate new ssh keys:
+We are going to generate new ssh keys to be used normally inside the cluster:
 
 ```
 cd /opt/icp
@@ -590,7 +589,7 @@ service_cluster_ip_range: 10.0.0.0/16
 
 
 
-You can have a look into that file (there is a lot of features that you can implement like GlusterFS or VMware network SDN).
+You can have a look into that file (there is a lot of features that you can implement like GlusterFS or VMware network SDN or Minio Object Storage).
 
 By default the admin password is not set. You can see this by searching in the config.yaml file:
 
@@ -799,46 +798,13 @@ Finally, you are using the  **cloudctl** command. This command can be used to co
 
 Execute the **cloudctl** command for the first time 
 
-`cloudctl`
+`cloudctl version`
 
 Results:
 ```console 
-# cloudctl
-NAME:
-   cloudctl - A command line tool to interact with IBM Cloud Private
-
-USAGE:
-[environment variables] cloudctl [global options] command [arguments...] [command options]
-
-VERSION:
-   3.1.0-715+e4d4ee1d28cc2a588dabc0f54067841ad6c36ec9
-
-COMMANDS:
-   api       View the API endpoint and API version for the service.
-   catalog   Manage catalog
-   cm        Manage cluster
-   config    Write default values to the config
-   iam       Manage identities and access to resources
-   login     Log user in.
-   logout    Log user out.
-   plugin    Manage plugins
-   pm        Manage passwords
-   target    Set or view the targeted namespace
-   tokens    Display the oauth tokens for the current session. Run cloudctl login to retrieve the tokens.
-   version   Check cli and api version compatibility
-   help      
-   
-Enter 'cloudctl help [command]' for more information about a command.
-
-ENVIRONMENT VARIABLES:
-   CLOUDCTL_COLOR=false                     Do not colorize output
-   CLOUDCTL_HOME=path/to/dir                Path to config directory
-   CLOUDCTL_TRACE=true                      Print API request diagnostics to stdout
-   CLOUDCTL_TRACE=path/to/trace.log         Append API request diagnostics to a log file
-
-GLOBAL OPTIONS:
-   --help, -h                         Show help
-
+# cloudctl version
+Client Version: 3.1.2-1203+81b254e18da556ae1d9b683a9702e8420896dae9
+Server Version: 3.1.2-1203+81b254e18da556ae1d9b683a9702e8420896dae9
 ```
 
 
@@ -992,15 +958,13 @@ Now go back to the **Dashboard** to see the change:
 ### Task 10. Installing helm
 
 Helm is a client/server application : Helm client and Tiller server.
-Test your helm command has been installed:
+Execute the following commands to install Helm client on the Master:
 
 ```console
-helm
-```
-
-Then set an environment variable:
-
-```console
+cd
+curl -O https://storage.googleapis.com/kubernetes-helm/helm-v2.9.1-linux-amd64.tar.gz
+tar -vxhf helm-v2.9.1-linux-amd64.tar.gz
+export PATH=/root/linux-amd64:$PATH
 export HELM_HOME=/root/.helm
 ```
 
@@ -1053,16 +1017,6 @@ Results:
 WARNING! Using --password via the CLI is insecure. Use --password-stdin.
 Login Succeeded
 ```
-
-You need also to save the HELM_HOME to .bashrc (to save this variable)
-
-```
-cd
-echo 'export HELM_HOME=/root/.helm' >> .bashrc
-source .bashrc
-```
-
-
 
 ### Task 11. Last important step before starting the labs
 
@@ -1155,7 +1109,7 @@ Verify the update:
 
 `kubectl get node ${NODE_NAME} -o yaml  | grep podsPerCore ` 
 
-**Using Aliases**
+**Using Aliases and saving variables**
 
 It could be interesting to define an alias name for docker and kubectl commands.
 
@@ -1165,15 +1119,19 @@ To do so, from the ssh terminal, type the following commands:
 
 `nano .bashrc`
 
-At the end of the file, you should see the 3 lines: these are aliases to help typing the commands:
+At the end of the file, you should see the 6 lines: these are aliases to help typing the commands:
 
 ```console
 alias k='kubectl'
 alias d='docker'
 alias h='helm'
+
+export PATH=/root/linux-amd64:$PATH
 export HELM_HOME=/root/.helm
 ./connect2icp.sh
 ```
+
+I also save the HELM_HOME variable and connect to cluster each time we login (with the connect2icp.sh script)
 
 Then source the .bashrc file:
 
@@ -1232,55 +1190,178 @@ A **connect2icp.sh** script is provided to avoid this problem.
 ---
 
 
-# appendix B : Changing ICP admin password
+# appendix B : One script for all
 
-This tutorial describes how to change the admin password.
+This tutorial describes how to install IBM Cloud Private with only one script :
 
-> ATTENTION : This procedure could be dangerous - Knowing **vi** is a prerequisite.
+Copy the content below in one file (icpinstall.sh for example) in your /root directory :
 
-### 1. Login to your ICP cluster using ssh
+```
+#!/bin/bash
+#
+# ICP 3.1.2 - Docker 18.03.1 - Ubuntu 16.04.04 - Microclimate 1.10.0
+# 
 
-`ssh root@ipaddress`
 
-### 2. Generate your new ICP password in base64
+MASTERIP=`curl ifconfig.co`
+HOSTNAME=`hostname`
+PASS=admin1!
 
-`echo -n "MyNewPassword"| base64`
+# Update system
+apt-get -q update
 
-Results :
+# Update /etc/hosts
+echo "127.0.0.1 localhost" > /etc/hosts
+echo "$MASTERIP $HOSTNAME.ibm.ws $HOSTNAME" >> /etc/hosts
 
-```console
- # echo -n "MyNewPassword"| base64
-TXlOZXdQYXNzd29yZA==
+# Add some modules to the OS
+apt-get -y install apt-transport-https ca-certificates curl software-properties-common python-minimal jq
+sysctl -w vm.max_map_count=262144
+swapoff -a
+sed -i '/ swap / s/^/#/' /etc/fstab
+echo "vm.max_map_count=262144" >> /etc/sysctl.conf
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
+add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+apt-get -q update
+apt-get -y install docker-ce=18.03.1~ce-0~ubuntu
+docker version
+
+# deploy configuration files
+docker pull ibmcom/icp-inception:3.1.2
+mkdir /opt/icp
+cd /opt/icp
+docker run -e LICENSE=accept -v "$(pwd)":/data ibmcom/icp-inception:3.1.2 cp -r cluster /data
+
+# Define SSH Keys
+ssh-keygen -b 4096 -f ~/.ssh/id_rsa -N ""
+cat ~/.ssh/id_rsa.pub | sudo tee -a ~/.ssh/authorized_keys
+systemctl restart sshd
+cp ~/.ssh/id_rsa ./cluster/ssh_key
+
+# Update the hosts file
+# Customize hosts before installing ICP
+cat <<END > /opt/icp/cluster/hosts
+[master]
+$MASTERIP
+
+[worker]
+$MASTERIP
+
+[proxy]
+$MASTERIP
+
+[management]
+$MASTERIP
+END
+
+# Configure ICP
+cd /opt/icp/cluster
+cat <<END >> /opt/icp/cluster/config.yaml
+password_rules:
+- '(.*)'
+default_admin_password: $PASS
+END
+
+# Configure ICP
+cd /opt/icp/cluster
+cat <<END >> /opt/icp/cluster/config.yaml
+password_rules:
+- '(.*)'
+default_admin_password: $PASS
+END
+
+# Install ICP
+docker run -e LICENSE=accept --net=host -t -v "$(pwd)":/installer/cluster ibmcom/icp-inception:3.1.2 install
+
+
+# Install CLI
+cd /opt/icp/cluster
+docker run -e LICENSE=accept --net=host -v /usr/local/bin:/data ibmcom/icp-inception:3.1.2 cp /usr/local/bin/kubectl /data
+
+cd /root
+cat << 'END' > connect2icp.sh
+#!/bin/bash
+#
+# THIS SCRIPT ONLY WORKS FOR LINUX
+# either run as root or as a sub-account with sudo configured for NOPASSWORD prompt
+# usage: ./connect2icp.sh
+# Connect the user to the ICP Cluster 
+CLUSTERNAME=mycluster
+ACCESS_IP=`curl ifconfig.co`
+USERNAME=admin
+PASSWD=admin1!
+token=$(curl -s -k -H "Content-Type: application/x-www-form-urlencoded;charset=UTF-8" -d "grant_type=password&username=$USERNAME&password=$PASSWD&scope=openid" https://$ACCESS_IP:8$
+kubectl config set-cluster $CLUSTERNAME.icp --server=https://$ACCESS_IP:8001 --insecure-skip-tls-verify=true
+kubectl config set-context $CLUSTERNAME.icp-context --cluster=$CLUSTERNAME.icp
+kubectl config set-credentials admin --token=$token
+kubectl config set-context $CLUSTERNAME.icp-context --user=admin --namespace=default
+kubectl config use-context $CLUSTERNAME.icp-context
+END
+
+chmod +x /root/connect2icp.sh
+./connect2icp.sh
+
+curl -kLo cloudctl-linux-amd64-3.1.2-1203 https://$MASTERIP:8443/api/cli/cloudctl-linux-amd64
+chmod 755 /root/cloudctl-linux-amd64-3.1.2-1203
+mv /root/cloudctl-linux-amd64-3.1.2-1203 /usr/local/bin/cloudctl
+
+
+cloudctl login -a https://mycluster.icp:8443 --skip-ssl-validation -u admin -p $PASS -n default
+
+cd /var
+mkdir data01
+
+cat <<EOF | kubectl create -f -
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: hostpath-pv-once-test1
+spec:
+  accessModes:
+  - ReadWriteOnce
+  capacity:
+    storage: 50Gi
+  hostPath:
+    path: /var/data01
+  persistentVolumeReclaimPolicy: Recycle
+EOF
+
+cat <<EOF | kubectl create -f -
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: hostpath-pv-many-test1
+spec:
+  accessModes:
+  - ReadWriteMany
+  capacity:
+    storage: 50Gi
+  hostPath:
+    path: /var/data01
+  persistentVolumeReclaimPolicy: Recycle
+EOF
+
+curl -O https://storage.googleapis.com/kubernetes-helm/helm-v2.9.1-linux-amd64.tar.gz
+tar -vxhf helm-v2.9.1-linux-amd64.tar.gz
+export PATH=/root/linux-amd64:$PATH
+export HELM_HOME=/root/.helm
+helm init --client-only
+helm version --tls
+
+docker login mycluster.icp:8500 -u admin -p $PASS
 ```
 
-> Attention choose a very specific password to your ICP (containing capital letters and numbers and special characters ...)
-> **Take a note of the  encrypted password**
+Then change permission on the file (icp install.sh) to become executable:
 
-### 3. Edit ICP secrets
+`chmod +x icp install.sh`
 
-`kubectl -n kube-system edit secrets platform-auth-idp-credentials`
+Then execute the script:
 
-Results :
+`./icpinstall.sh`
 
-```console
-# kubectl -n kube-system edit secrets platform-auth-idp-credentials
-error: You must be logged in to the server (Unauthorized)
-```
-
-> If you see that message then use the ./connect2icp.sh to reconnect to the cluster.
-
-`kubectl -n kube-system edit secrets platform-auth-idp-credentials`
-
-Results :
-
-![visecrets](images/visecrets.png)
+Wait 40 minutes before the end of script (and check if any errors).
 
 
-
-This command opens up the **vi** text editor on the secrets file.
-Locate the **admin-password** and change the existing encrypted password with the one that you generated.
-Don't change anything else in the file.
-Save your work : **escape  :wq**
 
 
 
