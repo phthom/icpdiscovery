@@ -35,7 +35,7 @@ Output:
 
 ```console
 Client:
- Version:           18.06.2-ce
+ Version:           18.03.1-ce
  API version:       1.38
  Go version:        go1.10.3
  Git commit:        6d37f41
@@ -45,7 +45,7 @@ Client:
 
 Server:
  Engine:
-  Version:          18.06.2-ce
+  Version:          18.03.1-ce
   API version:      1.38 (minimum version 1.12)
   Go version:       go1.10.3
   Git commit:       6d37f41
