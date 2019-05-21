@@ -128,7 +128,7 @@ To see the image, use the command:
 
 ### 5. Push the image to the registry
 
-Log in as user `admin` with password `admin`.
+Log in as user `admin` with password `admin1!`
 
 `docker login mycluster.icp:8500`
 
@@ -153,7 +153,7 @@ latest: digest: sha256:019a5da27d6ed2a58fab45669707daf89932da7c2bc13072c41ed4fb3
 
 Open a browser to https://ipaddress:8443. 
 
-Change the ip address depending on you hosts file. Create a security exception in your browser for this location and if necessary, click on the `Advanced` link and follow the prompts. Log in as user `admin` with password `admin`. 
+Change the ip address depending on you hosts file. Create a security exception in your browser for this location and if necessary, click on the `Advanced` link and follow the prompts. Log in as user `admin` with password `admin1!`
 
 View your image using `Menu > Container Images`
 
