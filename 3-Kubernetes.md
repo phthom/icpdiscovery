@@ -308,7 +308,7 @@ Dont forget to **exit**
 
 
 
-# Task 3 : Scaling Apps with Kubernetes
+# Task 2 : Scaling Apps with Kubernetes
 
 In this lab, understand how to update the number of replicas a deployment has and how to safely roll out an update on Kubernetes. Learn, also, how to perform a simple health check.
 
@@ -474,7 +474,7 @@ Perform a curl `http://ipaddress:<nodeport>` to confirm your new code is active 
 
 ![image-20181206113207582](images/image-20181206113207582.png)
 
-# Task 4: Understand Kubernetes manifests
+# Task 3: Understand Kubernetes manifests
 
 
 ### 1. Build a new Docker image
