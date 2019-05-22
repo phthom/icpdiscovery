@@ -353,7 +353,7 @@ You can list all versions available in the added repo:
 
 `apt-cache madison docker-ce`
 
-Use the following command to get Docker installed (Docker version 18.03.1 is the maximum version supported by IBM Cloud Private 3.1.0):
+Use the following command to get Docker installed (Docker version 18.03.1 is the one version supported by IBM Cloud Private 3.1.2):
 
 `apt-get -y install docker-ce=18.03.1~ce-0~ubuntu`
 

@@ -243,8 +243,11 @@ The helm chart that we created in the previous section that has been verified no
 
 You can use the command line to create a new namespace or you can use the IBM Cloud Private Console to do so:
 - Open a  Web browser from the application launcher
-- Go to `https://mycluster.icp:8443/`
-- Login as `admin` with the password of `admin`
+
+- Go to `https://<ipaddress>:8443/`
+
+- Login as `admin` with the password of `admin1!`
+
 - Go to **Menu > Manage**
 
 - Select __Namespaces__ then click __New namespace__
@@ -252,8 +255,13 @@ You can use the command line to create a new namespace or you can use the IBM Cl
 
 ![Organization menu](images/namespaces.png)
 
-  - Specify the namespace of `training` and click __Add namespace__
-    ![Add namespace](images/newnamespace.png)
+
+
+  - Specify the namespace of `training` and `ibm-privileged-psp` for the PSP then click  __Create namespace__
+
+![image-20190522131600273](images/image-20190522131600273-8523760.png)
+
+
 
 
 ### 2. Install the chart to the training namespace
@@ -411,10 +419,15 @@ Results:
 Successfully packaged chart and saved it to: /root/hellonginx-0.1.0.tgz
 ```
 
-**Login** to the master:
-`cloudctl login -a https://mycluster.icp:8443 --skip-ssl-validation`
+**Login** to the master with cloudctl:
 
-Then, use the **cloudctl catalog**command to load the chart:
+```
+cloudctl login -a https://mycluster.icp:8443 --skip-ssl-validation -u admin -p admin1! -n default
+```
+
+
+
+Then, use the **cloudctl catalog** command to load the chart:
 `cloudctl catalog load-helm-chart --archive /root/hellonginx-0.1.0.tgz`
 
 Results:
@@ -451,7 +464,7 @@ Find and change the **release name**, the **namspace** and the **nodeport** (for
 
 Click **Install** to see the results.
 
-Then check the application is running with `http://ipaddress:nodeport`in your browser.
+Then check the application is running with `http://<ipaddress>:nodeport`in your browser.
 
 Of course, you can customize the README.MD and add an icon to make the chart more appealing.
 
